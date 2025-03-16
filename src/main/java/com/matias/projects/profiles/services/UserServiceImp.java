@@ -2,6 +2,7 @@ package com.matias.projects.profiles.services;
 
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.matias.projects.profiles.interfaces.UserService;
@@ -12,13 +13,16 @@ import com.matias.projects.profiles.repositories.UserRepository;
 public class UserServiceImp implements UserService {
 
     private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
-    public UserServiceImp(UserRepository userRepository) {
+    public UserServiceImp(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public User saveUser(User user) {
+        user.setPassword( passwordEncoder.encode(user.getPassword()) );
         return userRepository.save(user);
     }
 

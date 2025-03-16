@@ -10,7 +10,7 @@ import jakarta.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@Entity
+@Entity(name = "app_users")
 @Data
 @AllArgsConstructor
 public class User {
@@ -21,7 +21,7 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private int phoneNumber;
+    private Integer phoneNumber;
     @ManyToMany
     private List<Role> roles;
 
