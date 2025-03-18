@@ -18,6 +18,7 @@ public class RoleServiceImp implements RoleService {
     }
 
     public Role saveRole(Role role) {
+        role.setName(role.getName().toLowerCase());
         return roleRepository.save(role);
     }
     public Role getRoleById(Long id) {
@@ -29,6 +30,7 @@ public class RoleServiceImp implements RoleService {
 
     @Override
     public Role updateRole(Role role) {
+        role.setId(0L);
         Role existingRole = roleRepository.findById(role.getId()).orElseThrow();
         existingRole.setId(0L);
         existingRole.setName(role.getName());

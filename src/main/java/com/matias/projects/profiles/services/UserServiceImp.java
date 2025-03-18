@@ -6,7 +6,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.matias.projects.profiles.interfaces.UserService;
+import com.matias.projects.profiles.models.Role;
 import com.matias.projects.profiles.models.User;
+import com.matias.projects.profiles.repositories.RoleRepository;
 import com.matias.projects.profiles.repositories.UserRepository;
 
 @Service
@@ -14,8 +16,10 @@ public class UserServiceImp implements UserService {
 
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
+    private RoleRepository roleRepository;
 
-    public UserServiceImp(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImp(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -66,6 +70,17 @@ public class UserServiceImp implements UserService {
     @Override
     public List<User> getUsersByRole(String roleName) {
         return userRepository.findByRolesName(roleName);
+    }
+
+    @Override
+    public User assignRolesToUser(Long userId, List<String> roles) {
+        User user = userRepository.findById(userId).orElseThrow();
+        List<Role> rolesList = roleRepository.findAllByNameIn(roles);
+        for (Role role : rolesList) {
+            System.out.println(role.getName());
+        }
+        user.setRoles(rolesList);
+        return userRepository.save(user);
     }
     
 }
