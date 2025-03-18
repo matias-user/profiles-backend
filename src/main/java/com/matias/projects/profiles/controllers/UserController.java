@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,5 +42,8 @@ public class UserController {
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
-    
+    @PatchMapping("{id}/roles")
+    public User assignRolesUser(@PathVariable Long id, @RequestBody List<String> roles) {
+        return userService.assignRolesToUser(id, roles);
+    }
 }
