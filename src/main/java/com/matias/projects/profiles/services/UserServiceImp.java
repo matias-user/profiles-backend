@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.matias.projects.profiles.exception.UserNotFoundException;
 import com.matias.projects.profiles.interfaces.UserService;
 import com.matias.projects.profiles.models.Role;
 import com.matias.projects.profiles.models.User;
@@ -32,22 +33,22 @@ public class UserServiceImp implements UserService {
 
     @Override
     public User getUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(null);
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Usuario con id " + id + " no encontrado"));
     }
 
     @Override
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow();
+        return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("Usuario con email " + email + " no encontrado"));
     }
 
     @Override
     public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow();
+        return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("Usuario con username " + username + " no encontrado"));
     }
 
     @Override
     public User updateUser(User user) {
-        User existingUser = userRepository.findById(user.getId()).orElseThrow();
+        User existingUser = userRepository.findById(user.getId()).orElseThrow(() -> new UserNotFoundException("Usuario con id " + user.getId() + " no encontrado"));
         existingUser.setId(0L);
         existingUser.setEmail(user.getEmail());
         existingUser.setUsername(user.getUsername());
@@ -74,7 +75,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public User assignRolesToUser(Long userId, List<String> roles) {
-        User user = userRepository.findById(userId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Usuario con id " + userId + " no encontrado"));
         List<Role> rolesList = roleRepository.findAllByNameIn(roles);
         for (Role role : rolesList) {
             System.out.println(role.getName());

@@ -2,7 +2,6 @@ package com.matias.projects.profiles.interfaces;
 
 import java.util.List;
 
-import com.matias.projects.profiles.models.Role;
 import com.matias.projects.profiles.models.User;
 
 public interface UserService {
