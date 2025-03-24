@@ -29,6 +29,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(OrganizationNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleOrganizationNotFoundException( OrganizationNotFoundException ex, WebRequest request ){
+        ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.NOT_FOUND.value(), 
+            "Not Found",
+            ex.getMessage(), 
+            request.getDescription(false));
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(
