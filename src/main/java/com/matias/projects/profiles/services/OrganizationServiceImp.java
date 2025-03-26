@@ -35,20 +35,24 @@ public class OrganizationServiceImp implements OrganizationService{
 
     @Override
     public Organization updateOrganization(Organization organization) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateOrganization'");
+        Organization organizationToUpdate = organizationRepository.findById( organization.getId())
+                .orElseThrow( () -> new OrganizationNotFoundException("No se ha encontrado la organización con el id: "+organization.getId()) );
+        organizationToUpdate.setName(organization.getName());
+        organizationToUpdate.setAddress(organization.getAddress());
+        organizationToUpdate.setCity(organization.getCity());
+        organizationToUpdate.setId(0L);
+        return organizationRepository.save(organizationToUpdate);    
     }
 
     @Override
     public void deleteOrganizationById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteOrganizationById'");
+
+        organizationRepository.deleteById(id);
     }
 
     @Override
     public List<Organization> getAllOrganizations() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllOrganizations'");
+        return organizationRepository.findAll();
     }
     
 }
