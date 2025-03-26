@@ -1,6 +1,6 @@
 package com.matias.projects.profiles.models;
 
-import java.util.Set;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,5 +27,5 @@ public class Organization {
     private String city;
 
     @OneToMany( mappedBy = "organization" )
-    private Set<User> users;
+    private List<User> users;
 }

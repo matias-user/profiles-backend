@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.matias.projects.profiles.exception.OrganizationNotFoundException;
 import com.matias.projects.profiles.interfaces.OrganizationService;
 import com.matias.projects.profiles.models.Organization;
+import com.matias.projects.profiles.models.User;
 import com.matias.projects.profiles.repositories.OrganizationRepository;
 
 @Service
@@ -53,6 +54,15 @@ public class OrganizationServiceImp implements OrganizationService{
     @Override
     public List<Organization> getAllOrganizations() {
         return organizationRepository.findAll();
+    }
+
+    @Override
+    public List<User> assignUsersToOrganization(Long organizationId, List<User> users) {
+        Organization organization = organizationRepository.findById(organizationId)
+                .orElseThrow( () -> new OrganizationNotFoundException("No se ha encontrado la organización con el id: "+organizationId) );
+        organization.setUsers(users);
+        organizationRepository.save(organization);
+        return users;
     }
     
 }

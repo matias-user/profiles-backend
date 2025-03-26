@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.matias.projects.profiles.interfaces.OrganizationService;
 import com.matias.projects.profiles.models.Organization;
+import com.matias.projects.profiles.models.User;
 
 @RestController
 @RequestMapping("/api/v1/organizations")
@@ -43,5 +45,9 @@ public class OrganizationController {
     @PostMapping
     public Organization saveOrganization(@RequestBody Organization organization){
         return service.saveOrganization(organization);
+    }
+    @PatchMapping("/users/{id}")
+    public List<User> addUsersToOrganization(@PathVariable Long id, @RequestBody List<User> users){
+        return service.assignUsersToOrganization(id, users);
     }
 }
