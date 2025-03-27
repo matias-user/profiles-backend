@@ -3,6 +3,8 @@ package com.matias.projects.profiles.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.matias.projects.profiles.dto.UserCreateDto;
+import com.matias.projects.profiles.dto.UserDto;
 import com.matias.projects.profiles.interfaces.UserService;
 import com.matias.projects.profiles.models.User;
 
@@ -26,16 +28,16 @@ public class UserController {
     }
 
     @GetMapping("{id}")
-    public User getUserById(@PathVariable Long id) {
+    public UserDto getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
     @GetMapping({"","/"})
-    public List<User> getAllUsers() {
+    public List<UserDto> getAllUsers() {
         return userService.getAllUsers();
     }
     @PostMapping
-    public User saveUser(@RequestBody User user) {
-        return userService.saveUser(user);
+    public UserDto saveUser(@RequestBody UserCreateDto userCreateDto) {
+        return userService.saveUser(userCreateDto);
     }
 
     @DeleteMapping("{id}")
@@ -43,7 +45,7 @@ public class UserController {
         userService.deleteUser(id);
     }
     @PatchMapping("{id}/roles")
-    public User assignRolesUser(@PathVariable Long id, @RequestBody List<String> roles) {
+    public UserDto assignRolesUser(@PathVariable Long id, @RequestBody List<String> roles) {
         return userService.assignRolesToUser(id, roles);
     }
 }
