@@ -1,15 +1,16 @@
 package com.matias.projects.profiles.services;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.matias.projects.profiles.dto.UserCreateDto;
+import com.matias.projects.profiles.dto.UserDto;
 import com.matias.projects.profiles.exception.UserNotFoundException;
 import com.matias.projects.profiles.interfaces.UserService;
+import com.matias.projects.profiles.mapper.UserMapper;
 import com.matias.projects.profiles.models.Role;
 import com.matias.projects.profiles.models.User;
 import com.matias.projects.profiles.repositories.RoleRepository;
@@ -29,38 +30,50 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public User saveUser(User user) {
-        user.setPassword( passwordEncoder.encode(user.getPassword()) );
+    public UserDto saveUser(UserCreateDto userCreateDto) {
+        User user = new User();
+        user.setUsername(userCreateDto.getUsername());
+        user.setEmail(userCreateDto.getEmail());
+        user.setPassword( passwordEncoder.encode(userCreateDto.getPassword()) );
+        user.setPhoneNumber(userCreateDto.getPhoneNumber());
+
         User userCreated = userRepository.save(user);
         assignRolesToUser(userCreated.getId(), List.of("guest")); // Asignar rol por defecto
-        return userCreated;
+        UserDto userResponse = UserMapper.toUserDto(userCreated);
+        return userResponse;
     }
 
     @Override
-    public User getUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Usuario con id " + id + " no encontrado"));
+    public UserDto getUserById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Usuario con id " + id + " no encontrado"));
+        return UserMapper.toUserDto(user);
     }
 
     @Override
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("Usuario con email " + email + " no encontrado"));
+    public UserDto getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("Usuario con email " + email + " no encontrado"));
+        return UserMapper.toUserDto(user);
     }
 
     @Override
-    public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("Usuario con username " + username + " no encontrado"));
+    public UserDto getUserByUsername(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("Usuario con username " + username + " no encontrado"));
+        return UserMapper.toUserDto(user);
     }
 
     @Override
-    public User updateUser(User user) {
-        User existingUser = userRepository.findById(user.getId()).orElseThrow(() -> new UserNotFoundException("Usuario con id " + user.getId() + " no encontrado"));
-        existingUser.setId(0L);
-        existingUser.setEmail(user.getEmail());
-        existingUser.setUsername(user.getUsername());
-        existingUser.setPassword(user.getPassword());
-        existingUser.setRoles(user.getRoles());
-        existingUser.setPhoneNumber(user.getPhoneNumber());
-        return userRepository.save(existingUser);
+    public UserDto updateUser(UserCreateDto userCreateDto, Long id) {
+        User existingUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Usuario con id " + id + " no encontrado"));
+        existingUser.setEmail(userCreateDto.getEmail());
+        existingUser.setUsername(userCreateDto.getUsername());
+        
+        if (userCreateDto.getPassword() != null && !userCreateDto.getPassword().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(userCreateDto.getPassword()));
+        }
+
+        existingUser.setRoles(userCreateDto.getRoles());
+        existingUser.setPhoneNumber(userCreateDto.getPhoneNumber());
+        return UserMapper.toUserDto(userRepository.save(existingUser));
     }
 
     @Override
@@ -69,17 +82,24 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDto> getAllUsers() {
+        List<User> users = userRepository.findAll();
+
+        return users.stream()
+                    .map(user -> UserMapper.toUserDto(user))
+                    .collect(Collectors.toList());
     }
 
     @Override
-    public List<User> getUsersByRole(String roleName) {
-        return userRepository.findByRolesName(roleName);
+    public List<UserDto> getUsersByRole(String roleName) {
+        List<User> users = userRepository.findByRolesName(roleName);
+        return users.stream()
+                    .map(user -> UserMapper.toUserDto(user))
+                    .collect(Collectors.toList());
     }
 
     @Override
-    public User assignRolesToUser(Long userId, List<String> roles) {
+    public UserDto assignRolesToUser(Long userId, List<String> roles) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Usuario con id " + userId + " no encontrado"));
         List<Role> rolesList = roleRepository.findAllByNameIn(
                     roles.stream()
@@ -87,7 +107,8 @@ public class UserServiceImp implements UserService {
                     .collect(Collectors.toList())
         );
         user.setRoles(rolesList);
-        return userRepository.save(user);
+        return UserMapper.toUserDto(userRepository.save(user)) ;
     }
+
     
 }
