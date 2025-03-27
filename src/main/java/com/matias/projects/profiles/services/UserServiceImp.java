@@ -1,6 +1,9 @@
 package com.matias.projects.profiles.services;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,7 +31,9 @@ public class UserServiceImp implements UserService {
     @Override
     public User saveUser(User user) {
         user.setPassword( passwordEncoder.encode(user.getPassword()) );
-        return userRepository.save(user);
+        User userCreated = userRepository.save(user);
+        assignRolesToUser(userCreated.getId(), List.of("guest")); // Asignar rol por defecto
+        return userCreated;
     }
 
     @Override
@@ -76,10 +81,11 @@ public class UserServiceImp implements UserService {
     @Override
     public User assignRolesToUser(Long userId, List<String> roles) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Usuario con id " + userId + " no encontrado"));
-        List<Role> rolesList = roleRepository.findAllByNameIn(roles);
-        for (Role role : rolesList) {
-            System.out.println(role.getName());
-        }
+        List<Role> rolesList = roleRepository.findAllByNameIn(
+                    roles.stream()
+                    .map( rol -> rol.toLowerCase() )
+                    .collect(Collectors.toList())
+        );
         user.setRoles(rolesList);
         return userRepository.save(user);
     }
