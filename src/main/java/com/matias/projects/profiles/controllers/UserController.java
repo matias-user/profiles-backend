@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.matias.projects.profiles.dto.UserCreateDto;
 import com.matias.projects.profiles.dto.UserDto;
 import com.matias.projects.profiles.interfaces.UserService;
-import com.matias.projects.profiles.models.User;
 
 import java.util.List;
 

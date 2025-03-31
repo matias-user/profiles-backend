@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -41,5 +42,7 @@ public class User {
     @JoinColumn(name = "organization_id")
     @JsonIgnore 
     private Organization organization;
+    private Boolean disable;
+    private Boolean locked;
 
 }

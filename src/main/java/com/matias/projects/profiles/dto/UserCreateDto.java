@@ -14,6 +14,8 @@ public class UserCreateDto {
     private String password;
     private String email;
     private Integer phoneNumber;
+    private Boolean locked;
+    private Boolean disable;
     private List<Role> roles;
 
 }

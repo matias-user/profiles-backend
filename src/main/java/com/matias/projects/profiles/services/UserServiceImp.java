@@ -36,6 +36,8 @@ public class UserServiceImp implements UserService {
         user.setEmail(userCreateDto.getEmail());
         user.setPassword( passwordEncoder.encode(userCreateDto.getPassword()) );
         user.setPhoneNumber(userCreateDto.getPhoneNumber());
+        user.setDisable(userCreateDto.getDisable());
+        user.setLocked(userCreateDto.getLocked());
 
         User userCreated = userRepository.save(user);
         assignRolesToUser(userCreated.getId(), List.of("guest")); // Asignar rol por defecto
